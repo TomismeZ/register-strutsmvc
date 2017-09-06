@@ -1,5 +1,7 @@
 package com.qingshixun.action;
 
+import java.util.List;
+
 import com.opensymphony.xwork2.ActionSupport;
 import com.qingshixun.entity.User;
 import com.qingshixun.service.IUserService;
@@ -19,8 +21,9 @@ public class RegisterAction extends ActionSupport {
 		return SUCCESS;
 	}
 	public String registerResult() throws Exception{
-		User u=service.findByNameUser(user.getUsername()).get(0);
-		if(u==null){
+		List<User> list=service.findByNameUser(user.getUsername());
+		System.out.println(list+"---");
+		if(list==null){
 			if (service.registerUser(user)) {
 				return SUCCESS;
 			} else {

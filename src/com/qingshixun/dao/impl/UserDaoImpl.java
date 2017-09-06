@@ -26,7 +26,8 @@ public class UserDaoImpl implements IUserDao {
 		try {
 			// 获取数据库连接
 			conn = (Connection) JDBCUtil.getConnection();
-			st = conn.prepareStatement("insert into t_user(username,password,gender,email,occupation,hobby) values(?,?,?,?,?,?)");
+			st = conn.prepareStatement(
+					"insert into t_user(username,password,gender,email,occupation,hobby) values(?,?,?,?,?,?)");
 			st.setString(1, user.getUsername());
 			st.setString(2, user.getPassword());
 			st.setString(3, String.valueOf(user.getGender()));
@@ -58,17 +59,24 @@ public class UserDaoImpl implements IUserDao {
 
 	@Override
 	public List<User> findByNameUser(String name) {
-		List<User> list=new ArrayList<>();
+		List<User> list = new ArrayList<>();
 		try {
 			// 获取数据库连接
 			conn = (Connection) JDBCUtil.getConnection();
-			st = conn.prepareStatement("SELECT username FROM user WHERE username=?");
+			st = conn.prepareStatement("SELECT username,password FROM t_user WHERE username=?");
 			st.setString(1, name);
 			rs = st.executeQuery();
-			while (rs.next()) {
-				User user = new User();
-				user.setUsername(rs.getString(1));
-				list.add(user);
+			if (rs.next()) {
+				while (rs.next()) {
+					User user = new User();
+					user.setUsername(rs.getString(1));
+					user.setPassword(rs.getString(2));
+
+					list.add(user);
+				}
+				return list;
+			} else {
+				return null;
 			}
 
 		} catch (Exception e) {
@@ -83,7 +91,7 @@ public class UserDaoImpl implements IUserDao {
 				e.printStackTrace();
 			}
 		}
-		return list;
+		return null;
 	}
 
 }
